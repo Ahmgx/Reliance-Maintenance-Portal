@@ -1,49 +1,66 @@
+<!-- form.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Maintenance Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maintenance Request</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f1f1f1;
+      background: #f5f5f5;
       padding: 20px;
     }
-    .header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
+    .container {
+      background: white;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #800000;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #800000;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #a00000;
+    }
+    .success {
+      background-color: #e0ffe0;
+      color: green;
+      padding: 10px;
+      margin-top: 20px;
+      border: 1px solid green;
+      border-radius: 5px;
     }
     .logo {
-      height: 60px;
-      margin-right: 20px;
+      text-align: center;
+      margin-bottom: 10px;
     }
-    h1 {
-      font-size: 26px;
-      color: #333;
-    }
-    .card {
-      background: white;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-left: 5px solid #007bff;
-      border-radius: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-    .status {
-      padding: 5px 10px;
-      border-radius: 4px;
-      color: white;
-      font-weight: bold;
-      display: inline-block;
-    }
-    .pending { background: #ffc107; }
-    .under-process { background: #17a2b8; }
-    .complete { background: #28a745; }
-    .label {
-      font-weight: bold;
-      color: #333;
+    .logo img {
+      max-width: 200px;
     }
     .ref-code {
       display: inline-block;
@@ -56,55 +73,89 @@
   </style>
 </head>
 <body>
+  <div class="container">
+    <div class="logo">
+      <img src="https://uploads.onecompiler.io/43s8su49v/43s8shn4v/Screenshot%202025-07-30%20224520.png" alt="Reliance Logo">
+    </div>
+    <h2>Maintenance Request</h2>
+    <form id="requestForm">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" required />
 
-  <div class="header">
-    <img src="شعار ريلانس.png" class="logo" alt="Company Logo"/>
-    <h1>Maintenance Requests Dashboard</h1>
-  </div>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required />
 
-  <div id="complaintsContainer">
-    <!-- Complaints will be injected here -->
+      <label for="building">Building Name</label>
+      <select id="building" name="building" required>
+        <option value="">-- Select --</option>
+        <option value="Palm Atlantis Hotel">Palm Atlantis Hotel</option>
+        <option value="Opel Tower">Opel Tower</option>
+        <option value="Centurion Star Tower">Centurion Star Tower</option>
+        <option value="Palace Tower">Palace Tower</option>
+      </select>
+     <label for="flat">Flat Number</label>
+     <input type="text" id="flat" name="flat" required />
+      <label for="phone">Phone Number</label>
+      <div style="display: flex; gap: 10px;">
+        <select id="countryCode" required>
+          <option value="+971">+971</option>
+          <option value="+966">+966</option>
+          <option value="+20">+20</option>
+          <option value="+1">+1</option>
+        </select>
+        <input type="tel" id="phone" name="phone" required />
+      </div>
+
+      <label for="issue">Issue Type</label>
+      <select id="issue" name="issue" required>
+        <option value="">-- Select --</option>
+        <option value="Electrical">🔌 Electrical</option>
+        <option value="Plumbing">🚿 Plumbing</option>
+        <option value="AC">❄️ AC</option>
+        <option value="Cleaning">🧹 Cleaning</option>
+      </select>
+
+      <label for="description">Issue Description</label>
+      <textarea id="description" name="description" rows="4" required></textarea>
+
+      <label for="image">Upload Image</label>
+      <input type="file" id="image" name="image" accept="image/*" />
+
+      <button type="submit">Submit Request</button>
+    </form>
+    <div id="confirmation" class="success" style="display:none;"></div>
   </div>
 
   <script>
-    function getStatusClass(status) {
-      if (status === 'Pending') return 'pending';
-      if (status === 'Under Process') return 'under-process';
-      if (status === 'Complete') return 'complete';
-      return '';
-    }
+    document.getElementById('requestForm').addEventListener('submit', function (e) {
+      e.preventDefault();
 
-    function renderComplaints() {
-      const container = document.getElementById('complaintsContainer');
-      const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+      const refNumber = 'RQ' + Math.floor(100000 + Math.random() * 900000);
+      const complaint = {
+        id: refNumber,
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        building: document.getElementById('building').value,
+        flat: document.getElementById('flat').value,
+        phone: document.getElementById('countryCode').value + document.getElementById('phone').value,
+        issue: document.getElementById('issue').value,
+        description: document.getElementById('description').value,
+        status: 'Pending'
+      };
 
-      if (complaints.length === 0) {
-        container.innerHTML = "<p>No complaints found.</p>";
-        return;
-      }
+      const existing = JSON.parse(localStorage.getItem('complaints')) || [];
+      existing.push(complaint);
+      localStorage.setItem('complaints', JSON.stringify(existing));
 
-      container.innerHTML = '';
-      complaints.forEach(comp => {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `
-          <p><span class="label">Reference No:</span> <span class="ref-code">${comp.id}</span></p>
-          <p><span class="label">Name:</span> ${comp.name}</p>
-          <p><span class="label">Email:</span> ${comp.email}</p>
-          <p><span class="label">Phone:</span> ${comp.phone}</p>
-          <p><span class="label">Building:</span> ${comp.building}</p>
-          <p><span class="label">Flat Number:</span> ${comp.flat || '-'}</p>
-          <p><span class="label">Issue Type:</span> ${comp.issue}</p>
-          <p><span class="label">Description:</span> ${comp.description}</p>
-          <p><span class="label">Status:</span> 
-            <span class="status ${getStatusClass(comp.status)}">${comp.status}</span>
-          </p>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    renderComplaints();
+      const confirmation = document.getElementById('confirmation');
+      confirmation.innerHTML = `
+        ✅ Request submitted successfully.<br>
+        📄 Reference Number: <span class="ref-code">${refNumber}</span><br>
+        📩 A copy has been sent to the maintenance team.
+      `;
+      confirmation.style.display = 'block';
+      this.reset();
+    });
   </script>
 </body>
 </html>
